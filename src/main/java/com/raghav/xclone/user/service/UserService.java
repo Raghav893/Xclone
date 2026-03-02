@@ -70,6 +70,13 @@ public class UserService {
         return "Profile updated successfully";
     }
     public User getMyProfile(){
+        Authentication authentication =SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user =repo.findByUsername(username);
 
+        if (user == null){
+            throw new RuntimeException("user not found");
+        }
+        return user;
     }
 }

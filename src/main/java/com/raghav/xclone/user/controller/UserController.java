@@ -47,11 +47,21 @@ public class UserController {
     }
 
     @PutMapping("/users/me")
-    public ResponseEntity<ApiResponse<String>> put(@RequestBody UpdateProfileDTO dto) {
+    public ResponseEntity<ApiResponse<String>> updateProfile(@RequestBody UpdateProfileDTO dto) {
         ApiResponse<String> response = new ApiResponse<>(
                 true,
                 "executed",
                 userService.updateProfile(dto),
+                null
+        );
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+    @GetMapping("/user/me")
+    public ResponseEntity<ApiResponse<User>> getMyProfile(){
+        ApiResponse<User> response = new ApiResponse<>(
+                true,
+                "found",
+                userService.getMyProfile(),
                 null
         );
         return new ResponseEntity<>(response,HttpStatus.OK);
