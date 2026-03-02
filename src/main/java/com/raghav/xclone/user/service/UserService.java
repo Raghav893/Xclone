@@ -33,7 +33,7 @@ public class UserService {
         User user = new User();
         user.setUsername(dto.getUsername());
         user.setPassword(dto.getPassword());
-        user.setRole(Role.valueOf((dto.getRole())));
+        user.setRole((dto.getRole()));
         user.setEmail(dto.getEmail());
         user.setEnabled(true);
 

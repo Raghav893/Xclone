@@ -1,5 +1,7 @@
 package com.raghav.xclone.user.dto;
 
+import com.raghav.xclone.user.entity.Role;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class RegisteringDTO {
     String username;
     String password;
-    String Role;
+    Role Role;
+    @Email
     String Email;
 }
