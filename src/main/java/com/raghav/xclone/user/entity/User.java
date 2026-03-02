@@ -37,4 +37,13 @@ public class User {
 
     @Column(nullable = false)
     private boolean enabled;
+
+    private String bio;
+
+    private String profile_image_url;
+
+    private Long followers_count;
+
+    private Long following_count;
+
 }
