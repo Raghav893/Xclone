@@ -43,6 +43,8 @@ public class UserService {
         user.setRole(dto.getRole());
         user.setEmail(dto.getEmail());
         user.setEnabled(true);
+        user.setFollowers_count(0);
+        user.setFollowing_count(0);
 
         user.setCreatedAt(LocalDateTime.now());
         return repo.save(user);

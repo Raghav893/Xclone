@@ -44,8 +44,8 @@ public class User {
 
     private String profile_image_url;
 
-    private Long followers_count;
+    private Integer followers_count;
 
-    private Long following_count;
+    private Integer following_count;
 
 }
