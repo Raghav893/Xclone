@@ -9,13 +9,18 @@ import com.raghav.xclone.user.entity.Role;
 import com.raghav.xclone.user.entity.User;
 import com.raghav.xclone.user.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -78,5 +83,18 @@ public class UserService {
             throw new RuntimeException("user not found");
         }
         return user;
+    }
+    public List<User> searchUser(String query, int page, int size) {
+
+        Pageable pageable = (Pageable) PageRequest.of(
+                page,
+                size,
+                Sort.by("username").ascending()
+        );
+
+        Page<User> userPage =
+                repo.findByUsernameContainingIgnoreCase(query, pageable);
+
+        return userPage.getContent();
     }
 }

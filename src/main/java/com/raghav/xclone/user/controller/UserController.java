@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class UserController {
 
@@ -65,5 +67,19 @@ public class UserController {
                 null
         );
         return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @GetMapping("/users/search")
+    public ResponseEntity<ApiResponse<List<User>>> searchUser(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        List<User> users = userService.searchUser(query, page, size);
+
+        ApiResponse<List<User>> response =
+                new ApiResponse<>(true, "Users found", users, null);
+
+        return ResponseEntity.ok(response);
     }
 }
