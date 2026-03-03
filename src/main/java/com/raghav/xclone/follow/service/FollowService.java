@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class followerService {
+public class FollowService {
     private final followRepository followRepository;
     private final UserRepository userRepository;
 
-    public followerService(followRepository followRepository, UserRepository userRepository) {
+    public FollowService(followRepository followRepository, UserRepository userRepository) {
         this.followRepository = followRepository;
         this.userRepository = userRepository;
     }
