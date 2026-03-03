@@ -11,6 +11,7 @@ import com.raghav.xclone.user.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -88,7 +89,7 @@ public class UserService {
     }
     public List<User> searchUser(String query, int page, int size) {
 
-        Pageable pageable = (Pageable) PageRequest.of(
+        Pageable pageable =  PageRequest.of(
                 page,
                 size,
                 Sort.by("username").ascending()
