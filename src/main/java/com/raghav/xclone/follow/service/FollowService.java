@@ -56,7 +56,7 @@ public class FollowService {
         userRepository.save(currentUser);
         userRepository.save(targetUser);
     }
-    public void unFollow(String username){
+    public User unFollow(String username){
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
@@ -82,6 +82,7 @@ public class FollowService {
         userRepository.save(currentUser);
         userRepository.save(targetUser);
         followRepository.delete(follow);
+        return currentUser;
     }
 }
 

@@ -2,6 +2,7 @@ package com.raghav.xclone.follow.controller;
 
 import com.raghav.xclone.common.response.ApiResponse;
 import com.raghav.xclone.follow.service.FollowService;
+import com.raghav.xclone.user.entity.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,13 +28,14 @@ public class FollowController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/users/{username}/follow")
-    public ResponseEntity<ApiResponse<String>> unfollowUser(@PathVariable String username) {
-        followService.unFollow(username);
+    @DeleteMapping("/{username}/follow")
+    public ResponseEntity<ApiResponse<User>> unfollowUser(@PathVariable String username) {
+        User user=followService.unFollow(username);
         ApiResponse response = new ApiResponse<>(
                 true,
-                "exexuted",
                 "unfollwed user"+username,
+                user
+                ,
                 null
         );
         return new ResponseEntity<>(response,HttpStatus.OK);
