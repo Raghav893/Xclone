@@ -56,5 +56,8 @@ public class FollowService {
         userRepository.save(currentUser);
         userRepository.save(targetUser);
     }
+    public void unFollow(String username){
+
     }
+}
 
