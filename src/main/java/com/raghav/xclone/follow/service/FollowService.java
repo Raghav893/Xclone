@@ -57,7 +57,31 @@ public class FollowService {
         userRepository.save(targetUser);
     }
     public void unFollow(String username){
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
 
+        String currentUsername = authentication.getName();
+
+        User currentUser = userRepository.findByUsername(currentUsername);
+        User targetUser = userRepository.findByUsername(username);
+
+        if (currentUser == null || targetUser == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        if (currentUser.getId().equals(targetUser.getId())) {
+            throw new RuntimeException("You cannot follow yourself");
+        }
+        boolean follows = followRepository.existsByFollowerAndFollowing(currentUser,targetUser);
+        if (!follows){
+            throw new RuntimeException("You dont follow him");
+        }
+        Follow follow = followRepository.findByFollowerAndFollowing(currentUser,targetUser);
+        currentUser.setFollowing_count(currentUser.getFollowing_count()-1);
+        targetUser.setFollowers_count(targetUser.getFollowers_count()-1);
+        userRepository.save(currentUser);
+        userRepository.save(targetUser);
+        followRepository.delete(follow);
     }
 }
 

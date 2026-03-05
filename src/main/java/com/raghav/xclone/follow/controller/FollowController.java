@@ -26,4 +26,17 @@ public class FollowController {
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @DeleteMapping("/users/{username}/follow")
+    public ResponseEntity<ApiResponse<String>> unfollowUser(@PathVariable String username) {
+        followService.unFollow(username);
+        ApiResponse response = new ApiResponse<>(
+                true,
+                "exexuted",
+                "unfollwed user"+username,
+                null
+        );
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
 }
