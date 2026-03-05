@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/users")
 public class FollowController {
@@ -39,6 +41,33 @@ public class FollowController {
                 null
         );
         return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @GetMapping("/{username}/followers")
+    public ResponseEntity<ApiResponse<List<User>>> followers(@PathVariable String username) {
+        List<User> followerList= followService.followerList(username);
+
+        ApiResponse<List<User>> response = new ApiResponse<>(
+          true,
+          "Followers list",
+          followerList,
+          null
+        );
+
+        return  ResponseEntity.ok(response);
+    }
+    @GetMapping("/{username}/following")
+    public ResponseEntity<ApiResponse<List<User>>> following(@PathVariable String username) {
+        List<User> followerList= followService.followingList(username);
+
+        ApiResponse<List<User>> response = new ApiResponse<>(
+                true,
+                "Following list",
+                followerList,
+                null
+        );
+
+        return  ResponseEntity.ok(response);
     }
 
 }

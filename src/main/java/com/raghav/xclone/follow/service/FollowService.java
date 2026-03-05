@@ -10,6 +10,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class FollowService {
     private final followRepository followRepository;
@@ -83,6 +85,38 @@ public class FollowService {
         userRepository.save(targetUser);
         followRepository.delete(follow);
         return currentUser;
+    }
+    public List<User> followingList(String username){
+
+
+        User user = userRepository.findByUsername(username);
+
+
+        if (user == null ) {
+            throw new RuntimeException("User not found");
+        }
+        List<Follow> follows = followRepository.findByFollower(user);
+        List<User> followingList =  follows
+                .stream()
+                .map(Follow::getFollowing)
+                .toList();
+        return followingList;
+    }
+    public List<User> followerList(String usermane){
+
+
+        User user = userRepository.findByUsername(usermane);
+
+
+        if (user == null ) {
+            throw new RuntimeException("User not found");
+        }
+        List<Follow> follows = followRepository.findByFollower(user);
+        List<User> followerList =  follows
+                .stream()
+                .map(Follow::getFollower)
+                .toList();
+        return followerList;
     }
 }
 
