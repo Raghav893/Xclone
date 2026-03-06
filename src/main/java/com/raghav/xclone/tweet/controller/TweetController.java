@@ -1,14 +1,14 @@
 package com.raghav.xclone.tweet.controller;
 
 import com.raghav.xclone.common.response.ApiResponse;
+import com.raghav.xclone.tweet.dto.ReplyDTO;
 import com.raghav.xclone.tweet.dto.TweetDTO;
 import com.raghav.xclone.tweet.entity.Tweet;
 import com.raghav.xclone.tweet.service.TweetService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users/tweet")
@@ -27,6 +27,16 @@ public class TweetController {
         response.setData(tweet);
         response.setErrors(null);
         response.setMessage("Created tweet");
+        response.setSuccess(true);
+        return ResponseEntity.ok(response);
+    }
+    @PostMapping("/{parentId}/reply")
+    public ResponseEntity<ApiResponse<Tweet>> ReplyTweet(@RequestBody ReplyDTO dto, @PathVariable UUID parentId) {
+        Tweet tweet =tweetService.ReplyTweet(dto,parentId);
+        ApiResponse response = new ApiResponse<>();
+        response.setData(tweet);
+        response.setErrors(null);
+        response.setMessage("Replied tweet");
         response.setSuccess(true);
         return ResponseEntity.ok(response);
     }

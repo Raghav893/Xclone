@@ -7,6 +7,5 @@ import java.util.UUID;
 @Data
 public class ReplyDTO {
     private String content;
-    private UUID tweetId;
     private String mediaurl;
 }

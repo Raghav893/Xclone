@@ -1,5 +1,6 @@
 package com.raghav.xclone.tweet.service;
 
+import com.raghav.xclone.tweet.dto.ReplyDTO;
 import com.raghav.xclone.tweet.dto.TweetDTO;
 import com.raghav.xclone.tweet.entity.Tweet;
 import com.raghav.xclone.tweet.repo.TweetRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class TweetService {
@@ -38,5 +40,25 @@ public class TweetService {
         tweetRepo.save(tweet);
         return tweet;
     }
-
+    @Transactional
+    public Tweet ReplyTweet(ReplyDTO dto, UUID parentId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username);
+        if (user == null){
+            throw new RuntimeException("User not found");
+        }
+        Tweet parentTweet = tweetRepo.findTweetByTweetId(parentId);
+        if (parentTweet == null) {
+            throw new RuntimeException("Tweet not found");
+        }
+        Tweet tweet = new Tweet();
+        tweet.setCreatedAt(LocalDateTime.now());
+        tweet.setContent(dto.getContent());
+        tweet.setParentTweet(parentTweet);
+        tweet.setMediaUrl(dto.getMediaurl());
+        tweet.setAuthor(user);
+        tweetRepo.save(tweet);
+        return tweet;
+    }
 }
