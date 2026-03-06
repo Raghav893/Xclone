@@ -43,7 +43,8 @@ public class TweetController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<ApiResponse<List<Tweet>>> getTweetsByUsername(@PathVariable String username) {
+    public ResponseEntity<ApiResponse<List<Tweet>>> getTweetsByUsername(@PathVariable String username)
+    {
         ApiResponse response = new ApiResponse<>();
                 response.setData(tweetService.GetTweetByUser(username));
                 response.setSuccess(true);
