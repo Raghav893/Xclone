@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -60,5 +61,15 @@ public class TweetService {
         tweet.setAuthor(user);
         tweetRepo.save(tweet);
         return tweet;
+    }
+    public List<Tweet> GetTweetByUser(String username){
+        User user = userRepository.findByUsername(username);
+
+        if (user == null){
+            throw new RuntimeException("User not found");
+        }
+
+        List<Tweet> allTweets = tweetRepo.findByAuthor(user);
+        return allTweets;
     }
 }

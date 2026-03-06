@@ -8,6 +8,7 @@ import com.raghav.xclone.tweet.service.TweetService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -39,5 +40,16 @@ public class TweetController {
         response.setMessage("Replied tweet");
         response.setSuccess(true);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<ApiResponse<List<Tweet>>> getTweetsByUsername(@PathVariable String username) {
+        ApiResponse response = new ApiResponse<>();
+                response.setData(tweetService.GetTweetByUser(username));
+                response.setSuccess(true);
+                response.setErrors(null);
+                response.setMessage("Tweets by "+username);
+                return ResponseEntity.ok(response);
+
     }
 }
