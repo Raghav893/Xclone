@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -60,5 +61,12 @@ public class LikeService {
         tweetRepository.save(tweet);
         likeRepository.deleteLikeByUser(currentUser);
         return tweet;
+    }
+    public List<Like> GetLikesByTweetId(UUID id){
+        Tweet tweet = tweetRepository.findTweetByTweetId(id);
+        if (tweet == null) {
+            throw new RuntimeException("Tweet Not found");
+        }
+        return likeRepository.getLikesByTweet(tweet);
     }
 }
