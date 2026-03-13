@@ -53,4 +53,19 @@ public class TweetController {
                 return ResponseEntity.ok(response);
 
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<String>> deleteTweetById(@PathVariable UUID id) {
+
+        tweetService.DeleteTweetById(id);
+
+        ApiResponse<String> response = new ApiResponse<>(
+                true,
+                "Tweet deleted successfully",
+                null,
+                null
+        );
+
+        return ResponseEntity.ok(response);
+    }
 }

@@ -5,14 +5,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.lang.module.ResolutionException;
 import java.util.List;
 
-public class GlobalExceptionHandler{
-    @ExceptionHandler(ResolutionException.class)
-    public ResponseEntity<ApiResponse<Object>> handleResourceNotFound(
-            ResolutionException exception
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiResponse<Object>> handleRuntimeException(
+            RuntimeException exception
     ){
         ApiResponse<Object> response = new ApiResponse<>(
                 false,
@@ -20,8 +22,10 @@ public class GlobalExceptionHandler{
                 null,
                 List.of(exception.getMessage())
         );
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Object>> handleValidationException(
             MethodArgumentNotValidException ex) {

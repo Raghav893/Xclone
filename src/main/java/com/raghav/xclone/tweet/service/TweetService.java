@@ -72,4 +72,15 @@ public class TweetService {
         List<Tweet> allTweets = tweetRepo.findByAuthor(user);
         return allTweets;
     }
+    @Transactional
+    public void DeleteTweetById(UUID id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username);
+        Tweet tweet = tweetRepo.findTweetByTweetId(id);
+        if (tweet.getAuthor()!= currentUser){
+            throw new RuntimeException("Unauthorized");
+        }
+        tweetRepo.delete(tweet);
+    }
 }

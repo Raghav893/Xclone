@@ -1,5 +1,6 @@
 package com.raghav.xclone.tweet.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.raghav.xclone.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,8 @@ import java.util.UUID;
 @Builder
 @Data
 @NoArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
 public class Tweet {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
