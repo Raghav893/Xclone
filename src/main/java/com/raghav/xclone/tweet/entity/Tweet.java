@@ -17,13 +17,14 @@ import java.util.UUID;
 @Builder
 @Data
 @NoArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 
 public class Tweet {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID tweetId;
 
+    @Column(nullable = false)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
