@@ -9,6 +9,7 @@ import com.raghav.xclone.user.repo.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -43,6 +44,7 @@ public class LikeService {
         likeRepository.save(like);
         return tweet;
     }
+    @Transactional
     public Tweet UnLikeTweet(UUID id){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username =  authentication.getName();
@@ -56,11 +58,7 @@ public class LikeService {
         }
         tweet.setLikeCount(tweet.getLikeCount()-1);
         tweetRepository.save(tweet);
-        Like like = new Like();
-        like.setTweet(tweet);
-        like.setUser(currentUser);
-        like.setCreatedAt(LocalDateTime.now());
-        likeRepository.save(like);
+        likeRepository.deleteLikeByUser(currentUser);
         return tweet;
     }
 }

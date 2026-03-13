@@ -22,6 +22,7 @@ import java.util.UUID;
 )
 public class Like {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
 
@@ -33,5 +34,5 @@ public class Like {
     @JoinColumn(name = "tweet_id",nullable = false)
     private Tweet tweet;
 
-    private LocalDateTime createdAt=LocalDateTime.now();
+    private LocalDateTime createdAt;
 }
