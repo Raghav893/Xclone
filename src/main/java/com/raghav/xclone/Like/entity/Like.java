@@ -14,6 +14,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Table(
+        name = "likes",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"user_id", "tweet_id"})
+        }
+)
 public class Like {
     @Id
     private UUID id;
