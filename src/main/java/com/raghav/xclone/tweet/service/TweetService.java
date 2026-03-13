@@ -78,6 +78,9 @@ public class TweetService {
         String username = authentication.getName();
         User currentUser = userRepository.findByUsername(username);
         Tweet tweet = tweetRepo.findTweetByTweetId(id);
+        if(currentUser == null || tweet == null){
+            throw new RuntimeException(" User not exist or tweet not exist");
+        }
         if (tweet.getAuthor()!= currentUser){
             throw new RuntimeException("Unauthorized");
         }
