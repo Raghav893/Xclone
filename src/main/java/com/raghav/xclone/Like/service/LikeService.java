@@ -43,4 +43,24 @@ public class LikeService {
         likeRepository.save(like);
         return tweet;
     }
+    public Tweet UnLikeTweet(UUID id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username =  authentication.getName();
+        User currentUser = userRepository.findByUsername(username);
+        if (currentUser == null) {
+            throw new RuntimeException("user not found");
+        }
+        Tweet tweet = tweetRepository.findTweetByTweetId(id);
+        if (tweet == null) {
+            throw new RuntimeException("Tweet Not found");
+        }
+        tweet.setLikeCount(tweet.getLikeCount()-1);
+        tweetRepository.save(tweet);
+        Like like = new Like();
+        like.setTweet(tweet);
+        like.setUser(currentUser);
+        like.setCreatedAt(LocalDateTime.now());
+        likeRepository.save(like);
+        return tweet;
+    }
 }
