@@ -1,58 +1,57 @@
-# Project Name
+# Xclone
 
-A brief description of what your project does.
+A Spring Boot backend for the Xclone project.
 
 ---
 
-## 🚀 Getting Started
+## Getting Started (Docker)
+
+### Prerequisites
+- Docker Desktop
+
+### Run
+```bash
+docker compose up --build
+```
+
+The app will start at `http://localhost:8080`
+
+---
+
+## Getting Started (Local)
 
 ### Prerequisites
 - Java 17+
 - Maven 3.8+
 - MySQL 8+
 
-### Installation
+### Configure MySQL
+Create a database named `Xclone` and ensure a user is available:
+- Username: `root`
+- Password: `root`
 
+### Run
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/your-project.git
-
-# Navigate into the project
-cd your-project
-
-# Install dependencies
-mvn install
-
-# Run the application
 mvn spring-boot:run
 ```
 
-The server will start at `http://localhost:8080`
+The app will start at `http://localhost:8080`
 
 ---
 
-## 📖 API Documentation
+## API Documentation
 
-Interactive API docs are auto-generated via **Swagger UI**.
-
-Once the app is running locally, visit:
-
+Swagger UI is available at:
 ```
 http://localhost:8080/swagger-ui/index.html
 ```
 
-The Swagger UI lets you:
-- Browse all available endpoints
-- See request/response schemas
-- Test API calls directly from the browser
-
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
-- **Backend** - Spring Boot
-- **Database** - MySQL
-- **API Docs** - Springdoc OpenAPI (Swagger UI)
+- Backend: Spring Boot
+- Database: MySQL
+- API Docs: Springdoc OpenAPI (Swagger UI)
 
 ---
-
