@@ -1,5 +1,6 @@
 package com.raghav.xclone.tweet.service;
 
+import com.raghav.xclone.hashtag.service.HashtagService;
 import com.raghav.xclone.tweet.dto.ReplyDTO;
 import com.raghav.xclone.tweet.dto.TweetDTO;
 import com.raghav.xclone.tweet.entity.Tweet;
@@ -19,9 +20,11 @@ import java.util.UUID;
 public class TweetService {
     private final TweetRepository tweetRepo;
     private final UserRepository userRepository;
-    public TweetService(TweetRepository tweetRepo, UserRepository userRepository) {
+    private final HashtagService hashtagService;
+    public TweetService(TweetRepository tweetRepo, UserRepository userRepository, HashtagService hashtagService) {
         this.tweetRepo = tweetRepo;
         this.userRepository = userRepository;
+        this.hashtagService = hashtagService;
     }
     @Transactional
     public Tweet CreateTweet(TweetDTO dto){
@@ -38,7 +41,9 @@ public class TweetService {
         tweet.setParentTweet(null);
         tweet.setMediaUrl(dto.getMediaurl());
         tweet.setAuthor(user);
+        hashtagService.getHashtagFromTweet(tweet);
         tweetRepo.save(tweet);
+
         return tweet;
     }
     @Transactional
@@ -59,6 +64,7 @@ public class TweetService {
         tweet.setParentTweet(parentTweet);
         tweet.setMediaUrl(dto.getMediaurl());
         tweet.setAuthor(user);
+        hashtagService.getHashtagFromTweet(tweet);
         tweetRepo.save(tweet);
         return tweet;
     }
