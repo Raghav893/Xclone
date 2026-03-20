@@ -41,8 +41,8 @@ public class TweetService {
         tweet.setParentTweet(null);
         tweet.setMediaUrl(dto.getMediaurl());
         tweet.setAuthor(user);
+        tweet = tweetRepo.save(tweet);
         hashtagService.getHashtagFromTweet(tweet);
-        tweetRepo.save(tweet);
 
         return tweet;
     }
@@ -64,8 +64,8 @@ public class TweetService {
         tweet.setParentTweet(parentTweet);
         tweet.setMediaUrl(dto.getMediaurl());
         tweet.setAuthor(user);
+        tweet = tweetRepo.save(tweet);
         hashtagService.getHashtagFromTweet(tweet);
-        tweetRepo.save(tweet);
         return tweet;
     }
     public List<Tweet> GetTweetByUser(String username){

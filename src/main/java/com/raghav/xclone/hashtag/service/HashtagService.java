@@ -63,8 +63,36 @@ public class HashtagService {
         return hashtags;
     }
     public List<Tweet> getTweetsByHashTag(HashTagDTO dto){
-        Optional<Hashtag> hashtag = hashtagRepository.findByTag(dto.getTag());
-        List<Tweet> tweets = tweetHashtagMappingRepository.findByHashtag(hashtag.get());
-        return tweets;
+        if (dto == null || dto.getTag() == null) {
+            return List.of();
+        }
+
+        String tag = dto.getTag().trim();
+        if (tag.startsWith("#")) {
+            tag = tag.substring(1);
+        }
+        if (tag.isBlank()) {
+            return List.of();
+        }
+        tag = tag.toLowerCase();
+
+        Optional<Hashtag> optionalHashtag = hashtagRepository.findByTag(tag);
+        if (optionalHashtag.isEmpty()) {
+            return List.of();
+        }
+
+        List<Tweet> tweets = tweetHashtagMappingRepository.findByHashtag(optionalHashtag.get());
+        if (tweets == null || tweets.isEmpty()) {
+            return List.of();
+        }
+
+
+        java.util.LinkedHashMap<java.util.UUID, Tweet> unique = new java.util.LinkedHashMap<>();
+        for (Tweet t : tweets) {
+            if (t != null && t.getTweetId() != null) {
+                unique.putIfAbsent(t.getTweetId(), t);
+            }
+        }
+        return new ArrayList<>(unique.values());
     }
 }
