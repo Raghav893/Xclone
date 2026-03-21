@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class mention {
+public class Mention {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
