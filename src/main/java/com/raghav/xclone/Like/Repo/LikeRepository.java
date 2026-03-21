@@ -14,4 +14,6 @@ public interface LikeRepository extends JpaRepository<Like, UUID> {
     void deleteLikeByUser(User user);
 
     List<Like> getLikesByTweet(Tweet tweet);
+
+    List<Like> findByUserOrderByCreatedAtDesc(User user);
 }

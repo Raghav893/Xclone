@@ -14,4 +14,6 @@ public interface TweetHashtagMappingRepository extends JpaRepository<TweetHashta
 
     @Query("select distinct m.tweet from TweetHashtagMapping m where m.hashtag = :hashtag")
     List<Tweet> findByHashtag(@Param("hashtag") Hashtag hashtag);
+
+    void deleteByTweet(Tweet tweet);
 }

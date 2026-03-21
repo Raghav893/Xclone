@@ -4,6 +4,7 @@ import com.raghav.xclone.hashtag.Entity.Hashtag;
 import com.raghav.xclone.hashtag.service.HashtagService;
 
 import com.raghav.xclone.mention.entity.Mention;
+import com.raghav.xclone.mention.repo.MentionRepository;
 import com.raghav.xclone.mention.service.MentionService;
 import com.raghav.xclone.tweet.dto.ReplyDTO;
 import com.raghav.xclone.tweet.dto.TweetDTO;
@@ -11,6 +12,9 @@ import com.raghav.xclone.tweet.entity.Tweet;
 import com.raghav.xclone.tweet.repo.TweetRepository;
 import com.raghav.xclone.user.entity.User;
 import com.raghav.xclone.user.repo.UserRepository;
+import com.raghav.xclone.follow.entity.Follow;
+import com.raghav.xclone.follow.repo.followRepository;
+import com.raghav.xclone.hashtag.repo.TweetHashtagMappingRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -26,11 +30,23 @@ public class TweetService {
     private final UserRepository userRepository;
     private final HashtagService hashtagService;
     private final MentionService mentionService;
-    public TweetService(TweetRepository tweetRepo, UserRepository userRepository, HashtagService hashtagService, MentionService mentionService) {
+    private final MentionRepository mentionRepository;
+    private final TweetHashtagMappingRepository tweetHashtagMappingRepository;
+    private final followRepository followRepository;
+    public TweetService(TweetRepository tweetRepo,
+                        UserRepository userRepository,
+                        HashtagService hashtagService,
+                        MentionService mentionService,
+                        MentionRepository mentionRepository,
+                        TweetHashtagMappingRepository tweetHashtagMappingRepository,
+                        followRepository followRepository) {
         this.tweetRepo = tweetRepo;
         this.userRepository = userRepository;
         this.hashtagService = hashtagService;
         this.mentionService = mentionService;
+        this.mentionRepository = mentionRepository;
+        this.tweetHashtagMappingRepository = tweetHashtagMappingRepository;
+        this.followRepository = followRepository;
     }
     @Transactional
     public Tweet CreateTweet(TweetDTO dto){
@@ -91,6 +107,75 @@ public class TweetService {
         List<Tweet> allTweets = tweetRepo.findByAuthor(user);
         return allTweets;
     }
+
+    public Tweet getTweetById(UUID id) {
+        Tweet tweet = tweetRepo.findTweetByTweetId(id);
+        if (tweet == null) {
+            throw new RuntimeException("Tweet not found");
+        }
+        return tweet;
+    }
+
+    public List<Tweet> getReplies(UUID parentId) {
+        Tweet parent = tweetRepo.findTweetByTweetId(parentId);
+        if (parent == null) {
+            throw new RuntimeException("Tweet not found");
+        }
+        return tweetRepo.findByParentTweetOrderByCreatedAtAsc(parent);
+    }
+
+    public List<Tweet> getFeed() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username);
+        if (currentUser == null) {
+            throw new RuntimeException("User not found");
+        }
+        List<Follow> follows = followRepository.findByFollower(currentUser);
+        List<User> authors = follows
+                .stream()
+                .map(Follow::getFollowing)
+                .toList();
+        java.util.ArrayList<User> allAuthors = new java.util.ArrayList<>(authors);
+        allAuthors.add(currentUser);
+        if (allAuthors.isEmpty()) {
+            return List.of();
+        }
+        return tweetRepo.findByAuthorInOrderByCreatedAtDesc(allAuthors);
+    }
+
+    @Transactional
+    public Tweet editTweet(UUID id, TweetDTO dto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username);
+        if (currentUser == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        Tweet tweet = tweetRepo.findTweetByTweetId(id);
+        if (tweet == null) {
+            throw new RuntimeException("Tweet not found");
+        }
+        if (!tweet.getAuthor().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Unauthorized");
+        }
+
+        tweet.setContent(dto.getContent());
+        tweet.setMediaUrl(dto.getMediaurl());
+        Tweet saved = tweetRepo.save(tweet);
+
+        tweetHashtagMappingRepository.deleteByTweet(saved);
+        mentionRepository.deleteByTweet(saved);
+
+        List<Hashtag> hashtags = hashtagService.getHashtagFromTweet(saved);
+        List<Mention> mentions = mentionService.processMentions(saved);
+
+        saved.setHashtags(hashtags);
+        saved.setMentions(mentions);
+
+        return saved;
+    }
     @Transactional
     public void DeleteTweetById(UUID id){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -100,7 +185,7 @@ public class TweetService {
         if(currentUser == null || tweet == null){
             throw new RuntimeException(" User not exist or tweet not exist");
         }
-        if (tweet.getAuthor()!= currentUser){
+        if (!tweet.getAuthor().getId().equals(currentUser.getId())){
             throw new RuntimeException("Unauthorized");
         }
         tweetRepo.delete(tweet);

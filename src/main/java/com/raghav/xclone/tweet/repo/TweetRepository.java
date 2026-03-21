@@ -11,4 +11,10 @@ public interface TweetRepository extends JpaRepository<Tweet, UUID> {
     Tweet findTweetByTweetId(UUID tweetId);
 
     List<Tweet> findByAuthor(User author);
+
+    List<Tweet> findByAuthorOrderByCreatedAtDesc(User author);
+
+    List<Tweet> findByAuthorInOrderByCreatedAtDesc(List<User> authors);
+
+    List<Tweet> findByParentTweetOrderByCreatedAtAsc(Tweet parentTweet);
 }

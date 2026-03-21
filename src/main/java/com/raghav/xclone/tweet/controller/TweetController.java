@@ -54,6 +54,30 @@ public class TweetController {
 
     }
 
+    @GetMapping("/{id}/replies")
+    public ResponseEntity<ApiResponse<List<Tweet>>> getReplies(@PathVariable UUID id) {
+        ApiResponse<List<Tweet>> response = new ApiResponse<>(
+                true,
+                "Replies",
+                tweetService.getReplies(id),
+                null
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<Tweet>> editTweet(
+            @PathVariable UUID id,
+            @RequestBody TweetDTO tweetDTO) {
+        ApiResponse<Tweet> response = new ApiResponse<>(
+                true,
+                "Tweet updated",
+                tweetService.editTweet(id, tweetDTO),
+                null
+        );
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteTweetById(@PathVariable UUID id) {
 

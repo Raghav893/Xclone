@@ -87,6 +87,14 @@ public class UserService {
         }
         return user;
     }
+
+    public User getProfileByUsername(String username) {
+        User user = repo.findByUsername(username);
+        if (user == null) {
+            throw new RuntimeException("user not found");
+        }
+        return user;
+    }
     public List<User> searchUser(String query, int page, int size) {
 
         Pageable pageable =  PageRequest.of(

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class LikeService {
@@ -68,5 +69,16 @@ public class LikeService {
             throw new RuntimeException("Tweet Not found");
         }
         return likeRepository.getLikesByTweet(tweet);
+    }
+
+    public List<Tweet> getLikedTweetsByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new RuntimeException("user not found");
+        }
+        return likeRepository.findByUserOrderByCreatedAtDesc(user)
+                .stream()
+                .map(Like::getTweet)
+                .collect(Collectors.toList());
     }
 }
