@@ -73,12 +73,12 @@ public class UserController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @GetMapping("/users/{username}")
-    public ResponseEntity<ApiResponse<User>> getUserProfile(@PathVariable String username) {
+    @GetMapping("/users/{identifier}")
+    public ResponseEntity<ApiResponse<User>> getUserProfile(@PathVariable String identifier) {
         ApiResponse<User> response = new ApiResponse<>(
                 true,
                 "found",
-                userService.getProfileByUsername(username),
+                userService.getProfileByIdentifier(identifier),
                 null
         );
         return new ResponseEntity<>(response, HttpStatus.OK);

@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -88,12 +90,23 @@ public class UserService {
         return user;
     }
 
-    public User getProfileByUsername(String username) {
-        User user = repo.findByUsername(username);
-        if (user == null) {
-            throw new RuntimeException("user not found");
+    public User getProfileByIdentifier(String identifier) {
+        Optional<User> user;
+        if (looksLikeUuid(identifier)) {
+            user = repo.findById(UUID.fromString(identifier));
+        } else {
+            user = Optional.ofNullable(repo.findByUsername(identifier));
         }
-        return user;
+        return user.orElseThrow(() -> new RuntimeException("user not found"));
+    }
+
+    private boolean looksLikeUuid(String value) {
+        try {
+            UUID.fromString(value);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
     }
     public List<User> searchUser(String query, int page, int size) {
 
