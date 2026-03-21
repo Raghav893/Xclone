@@ -7,6 +7,15 @@ spring:
   jmx:
     enabled: false
 
+  cache:
+    type: redis
+    redis:
+      cache-null-values: false
+
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:6379}
 
 
   jpa:
@@ -22,3 +31,7 @@ logging:
     org:
       springframework:
         security: DEBUG
+
+app:
+  cache:
+    feed-ttl: 60s

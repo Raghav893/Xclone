@@ -5,6 +5,7 @@ import com.raghav.xclone.follow.repo.followRepository;
 
 import com.raghav.xclone.user.entity.User;
 import com.raghav.xclone.user.repo.UserRepository;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class FollowService {
         this.userRepository = userRepository;
     }
     @Transactional
+    @CacheEvict(cacheNames = "feed", allEntries = true)
     public void followUser(String toFollowUsername) {
 
         Authentication authentication =
@@ -58,6 +60,7 @@ public class FollowService {
         userRepository.save(currentUser);
         userRepository.save(targetUser);
     }
+    @CacheEvict(cacheNames = "feed", allEntries = true)
     public User unFollow(String username){
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();

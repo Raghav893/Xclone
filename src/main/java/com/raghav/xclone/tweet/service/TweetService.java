@@ -15,6 +15,8 @@ import com.raghav.xclone.user.repo.UserRepository;
 import com.raghav.xclone.follow.entity.Follow;
 import com.raghav.xclone.follow.repo.followRepository;
 import com.raghav.xclone.hashtag.repo.TweetHashtagMappingRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -49,6 +51,7 @@ public class TweetService {
         this.followRepository = followRepository;
     }
     @Transactional
+    @CacheEvict(cacheNames = "feed", allEntries = true)
     public Tweet CreateTweet(TweetDTO dto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -76,6 +79,7 @@ public class TweetService {
         return savedTweet;
     }
     @Transactional
+    @CacheEvict(cacheNames = "feed", allEntries = true)
     public Tweet ReplyTweet(ReplyDTO dto, UUID parentId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -124,6 +128,10 @@ public class TweetService {
         return tweetRepo.findByParentTweetOrderByCreatedAtAsc(parent);
     }
 
+    @Cacheable(
+            cacheNames = "feed",
+            key = "T(org.springframework.security.core.context.SecurityContextHolder).context.authentication.name"
+    )
     public List<Tweet> getFeed() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -145,6 +153,7 @@ public class TweetService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = "feed", allEntries = true)
     public Tweet editTweet(UUID id, TweetDTO dto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -177,6 +186,7 @@ public class TweetService {
         return saved;
     }
     @Transactional
+    @CacheEvict(cacheNames = "feed", allEntries = true)
     public void DeleteTweetById(UUID id){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
