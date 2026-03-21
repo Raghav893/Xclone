@@ -6,6 +6,7 @@ import com.raghav.xclone.tweet.entity.Tweet;
 import com.raghav.xclone.tweet.repo.TweetRepository;
 import com.raghav.xclone.user.entity.User;
 import com.raghav.xclone.user.repo.UserRepository;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,8 @@ public class LikeService {
         this.tweetRepository = tweetRepository;
         this.userRepository = userRepository;
     }
+    @Transactional
+    @CacheEvict(cacheNames = "feed", allEntries = true)
     public Tweet LikeTweetById(UUID id){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username =  authentication.getName();
@@ -37,6 +40,9 @@ public class LikeService {
         if (tweet == null) {
             throw new RuntimeException("Tweet Not found");
         }
+        if (likeRepository.existsByUserAndTweet(currentUser, tweet)) {
+            throw new RuntimeException("You have already liked this tweet");
+        }
         tweet.setLikeCount(tweet.getLikeCount()+1);
         tweetRepository.save(tweet);
         Like like = new Like();
@@ -47,6 +53,7 @@ public class LikeService {
         return tweet;
     }
     @Transactional
+    @CacheEvict(cacheNames = "feed", allEntries = true)
     public Tweet UnLikeTweet(UUID id){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username =  authentication.getName();
@@ -58,9 +65,11 @@ public class LikeService {
         if (tweet == null) {
             throw new RuntimeException("Tweet Not found");
         }
-        tweet.setLikeCount(tweet.getLikeCount()-1);
+        Like like = likeRepository.findByUserAndTweet(currentUser, tweet)
+                .orElseThrow(() -> new RuntimeException("Like not found"));
+        tweet.setLikeCount(Math.max(0, tweet.getLikeCount()-1));
         tweetRepository.save(tweet);
-        likeRepository.deleteLikeByUser(currentUser);
+        likeRepository.delete(like);
         return tweet;
     }
     public List<Like> GetLikesByTweetId(UUID id){

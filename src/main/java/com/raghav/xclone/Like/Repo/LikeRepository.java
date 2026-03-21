@@ -11,6 +11,10 @@ import java.util.UUID;
 
 @Repository
 public interface LikeRepository extends JpaRepository<Like, UUID> {
+    boolean existsByUserAndTweet(User user, Tweet tweet);
+
+    java.util.Optional<Like> findByUserAndTweet(User user, Tweet tweet);
+
     void deleteLikeByUser(User user);
 
     List<Like> getLikesByTweet(Tweet tweet);

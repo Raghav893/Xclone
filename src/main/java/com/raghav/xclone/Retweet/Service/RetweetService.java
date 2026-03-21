@@ -6,6 +6,7 @@ import com.raghav.xclone.tweet.entity.Tweet;
 import com.raghav.xclone.tweet.repo.TweetRepository;
 import com.raghav.xclone.user.entity.User;
 import com.raghav.xclone.user.repo.UserRepository;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,8 @@ public class RetweetService {
         return tweet;
     }
 
+    @Transactional
+    @CacheEvict(cacheNames = "feed", allEntries = true)
     public Tweet retweetTweet(UUID tweetId) {
         User currentUser = getCurrentUser();
         Tweet tweet = getTweetById(tweetId);
