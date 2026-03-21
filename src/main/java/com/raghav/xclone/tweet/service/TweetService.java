@@ -1,6 +1,10 @@
 package com.raghav.xclone.tweet.service;
 
+import com.raghav.xclone.hashtag.Entity.Hashtag;
 import com.raghav.xclone.hashtag.service.HashtagService;
+
+import com.raghav.xclone.mention.entity.Mention;
+import com.raghav.xclone.mention.service.MentionService;
 import com.raghav.xclone.tweet.dto.ReplyDTO;
 import com.raghav.xclone.tweet.dto.TweetDTO;
 import com.raghav.xclone.tweet.entity.Tweet;
@@ -21,17 +25,20 @@ public class TweetService {
     private final TweetRepository tweetRepo;
     private final UserRepository userRepository;
     private final HashtagService hashtagService;
-    public TweetService(TweetRepository tweetRepo, UserRepository userRepository, HashtagService hashtagService) {
+    private final MentionService mentionService;
+    public TweetService(TweetRepository tweetRepo, UserRepository userRepository, HashtagService hashtagService, MentionService mentionService) {
         this.tweetRepo = tweetRepo;
         this.userRepository = userRepository;
         this.hashtagService = hashtagService;
+        this.mentionService = mentionService;
     }
     @Transactional
     public Tweet CreateTweet(TweetDTO dto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
+
         User user = userRepository.findByUsername(username);
-        if (user == null){
+        if (user == null) {
             throw new RuntimeException("User not found");
         }
 
@@ -41,10 +48,16 @@ public class TweetService {
         tweet.setParentTweet(null);
         tweet.setMediaUrl(dto.getMediaurl());
         tweet.setAuthor(user);
-        tweet = tweetRepo.save(tweet);
-        hashtagService.getHashtagFromTweet(tweet);
 
-        return tweet;
+        Tweet savedTweet = tweetRepo.save(tweet);
+
+        List<Hashtag> hashtags = hashtagService.getHashtagFromTweet(savedTweet);
+        List<Mention> mentions = mentionService.processMentions(savedTweet);
+
+        savedTweet.setHashtags(hashtags);
+        savedTweet.setMentions(mentions);
+
+        return savedTweet;
     }
     @Transactional
     public Tweet ReplyTweet(ReplyDTO dto, UUID parentId){

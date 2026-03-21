@@ -8,9 +8,7 @@ import com.raghav.xclone.user.entity.User;
 import com.raghav.xclone.user.repo.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,32 +21,36 @@ public class MentionService {
         this.mentionRepository = mentionRepository;
         this.userRepository = userRepository;
     }
-    public List<User> findMentionInTweet(Tweet tweet){
+    public List<Mention> processMentions(Tweet tweet) {
+
         String content = tweet.getContent();
-        List<User> mentionList = new ArrayList<>();
+
         Pattern pattern = Pattern.compile("@(\\w+)");
         Matcher matcher = pattern.matcher(content);
-        
-        java.util.Set<String> processedUsernames = new java.util.HashSet<>();
 
-        while (matcher.find()){
+        Set<String> processedUsernames = new HashSet<>();
+        List<Mention> mentions = new ArrayList<>();
+
+        while (matcher.find()) {
+
             String username = matcher.group(1);
-            
-            if (processedUsernames.contains(username)) {
-                continue;
-            }
+
+            if (processedUsernames.contains(username)) continue;
 
             User user = userRepository.findByUsername(username);
+
             if (user != null) {
+
                 Mention mention = new Mention();
                 mention.setTweet(tweet);
                 mention.setUser(user);
-                mentionRepository.save(mention);
-                
-                mentionList.add(user);
+
+                mentions.add(mention);
                 processedUsernames.add(username);
             }
         }
-        return mentionList;
-    }
-}
+
+        mentionRepository.saveAll(mentions);
+
+        return mentions;
+    }}

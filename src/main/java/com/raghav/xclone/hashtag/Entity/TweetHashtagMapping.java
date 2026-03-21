@@ -1,5 +1,7 @@
 package com.raghav.xclone.hashtag.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.raghav.xclone.tweet.entity.Tweet;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@JsonIgnoreProperties
 public class TweetHashtagMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -19,6 +22,7 @@ public class TweetHashtagMapping {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tweet_id",nullable = false)
+    @JsonIgnore
     private Tweet tweet;
 
     @ManyToOne(fetch = FetchType.LAZY)
