@@ -2,6 +2,8 @@ package com.raghav.xclone.tweet.repo;
 
 import com.raghav.xclone.tweet.entity.Tweet;
 import com.raghav.xclone.user.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -15,6 +17,8 @@ public interface TweetRepository extends JpaRepository<Tweet, UUID> {
     List<Tweet> findByAuthorOrderByCreatedAtDesc(User author);
 
     List<Tweet> findByAuthorInOrderByCreatedAtDesc(List<User> authors);
+
+    Page<Tweet> findByAuthorInOrderByCreatedAtDesc(List<User> authors, Pageable pageable);
 
     List<Tweet> findByParentTweetOrderByCreatedAtAsc(Tweet parentTweet);
 }

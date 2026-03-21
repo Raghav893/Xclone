@@ -6,6 +6,7 @@ import com.raghav.xclone.tweet.service.TweetService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,11 +34,13 @@ public class TweetQueryController {
     }
 
     @GetMapping("/feed")
-    public ResponseEntity<ApiResponse<List<Tweet>>> getFeed() {
+    public ResponseEntity<ApiResponse<List<Tweet>>> getFeed(
+            @RequestParam(defaultValue = "0") int page
+    ) {
         ApiResponse<List<Tweet>> response = new ApiResponse<>(
                 true,
                 "Feed",
-                tweetService.getFeed(),
+                tweetService.getFeed(page),
                 null
         );
         return ResponseEntity.ok(response);

@@ -17,6 +17,9 @@ import com.raghav.xclone.follow.repo.followRepository;
 import com.raghav.xclone.hashtag.repo.TweetHashtagMappingRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,7 @@ import java.util.UUID;
 
 @Service
 public class TweetService {
+    private static final int FEED_PAGE_SIZE = 35;
     private final TweetRepository tweetRepo;
     private final UserRepository userRepository;
     private final HashtagService hashtagService;
@@ -130,9 +134,9 @@ public class TweetService {
 
     @Cacheable(
             cacheNames = "feed",
-            key = "T(org.springframework.security.core.context.SecurityContextHolder).context.authentication.name"
+            key = "T(org.springframework.security.core.context.SecurityContextHolder).context.authentication.name + ':' + #page"
     )
-    public List<Tweet> getFeed() {
+    public List<Tweet> getFeed(int page) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User currentUser = userRepository.findByUsername(username);
@@ -149,7 +153,9 @@ public class TweetService {
         if (allAuthors.isEmpty()) {
             return List.of();
         }
-        return tweetRepo.findByAuthorInOrderByCreatedAtDesc(allAuthors);
+        Pageable pageable = PageRequest.of(page, FEED_PAGE_SIZE);
+        Page<Tweet> tweetPage = tweetRepo.findByAuthorInOrderByCreatedAtDesc(allAuthors, pageable);
+        return tweetPage.getContent();
     }
 
     @Transactional
