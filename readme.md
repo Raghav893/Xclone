@@ -1,57 +1,75 @@
-# Xclone
+# Xclone API
 
-A Spring Boot backend for the Xclone project.
+A Spring Boot 3.x backend that powers a Twitter/X-style clone, with JWT auth, MySQL persistence, and Redis-backed caching.
 
----
+**Features**
+- JWT authentication and stateless security
+- Core social graph: users, follows, tweets, retweets, likes
+- Rich metadata: hashtags and mentions
+- Redis caching (feed TTL configurable)
+- OpenAPI/Swagger UI for interactive docs
 
-## Getting Started (Docker)
+**Tech Stack**
+- Java 17, Spring Boot 3.x, Maven
+- Spring Security + JWT
+- MySQL 8 (JPA/Hibernate)
+- Redis (Spring Cache)
+- Springdoc OpenAPI (Swagger UI)
 
-### Prerequisites
-- Docker Desktop
+**Project Structure**
+- `src/main/java/com/raghav/xclone`
+- Feature modules: `tweet/`, `user/`, `follow/`, `mention/`, `hashtag/`, `Like/`, `Retweet/`
+- Cross-cutting: `security/`, `config/`, `common/`
+- Config: `src/main/resources/application.yaml`
+- Tests: `src/test/java/com/raghav/xclone`
 
-### Run
+**Quickstart (Docker)**
 ```bash
 docker compose up --build
 ```
+The API starts at `http://localhost:8080`.
 
-The app will start at `http://localhost:8080`
-
----
-
-## Getting Started (Local)
-
-### Prerequisites
+**Local Development**
+Prerequisites:
 - Java 17+
 - Maven 3.8+
 - MySQL 8+
+- Redis 7+
 
-### Configure MySQL
-Create a database named `Xclone` and ensure a user is available:
-- Username: `root`
-- Password: `root`
+Create the database:
+```sql
+CREATE DATABASE Xclone;
+```
 
-### Run
+Run:
 ```bash
 mvn spring-boot:run
 ```
+The API starts at `http://localhost:8080`.
 
-The app will start at `http://localhost:8080`
+**Configuration**
+Environment variables are optional; defaults come from `src/main/resources/application.yaml`.
+- `SPRING_DATASOURCE_URL` default: `jdbc:mysql://localhost:3306/Xclone?allowPublicKeyRetrieval=true&useSSL=false`
+- `SPRING_DATASOURCE_USERNAME` default: `root`
+- `SPRING_DATASOURCE_PASSWORD` default: `root`
+- `SPRING_REDIS_HOST` default: `localhost`
+- `SPRING_REDIS_PORT` default: `6379`
 
----
+**API Docs**
+Swagger UI:
+`http://localhost:8080/swagger-ui/index.html`
 
-## API Documentation
+OpenAPI spec:
+`http://localhost:8080/v3/api-docs`
 
-Swagger UI is available at:
+**Health Check**
+`http://localhost:8080/api/health`
+
+**Testing**
+```bash
+mvn test
 ```
-http://localhost:8080/swagger-ui/index.html
-```
 
----
-
-## Tech Stack
-
-- Backend: Spring Boot
-- Database: MySQL
-- API Docs: Springdoc OpenAPI (Swagger UI)
-
----
+**Notes**
+- Schema generation uses `spring.jpa.hibernate.ddl-auto=update` by default. Adjust for production.
+- `logging.level.org.springframework.security=DEBUG` is enabled in `application.yaml` for local troubleshooting.
